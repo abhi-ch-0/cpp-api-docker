@@ -67,6 +67,13 @@ int main()
 
     client_socket_fd = accept(tcp_socket_fd, (struct sockaddr *)&client_address, &client_addrlen);
 
+    if (client_socket_fd == -1)
+    {
+        perror("Accept failed on socket.");
+        close(tcp_socket_fd);
+        exit(EXIT_FAILURE);
+    }
+
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &client_address.sin_addr, client_ip, INET_ADDRSTRLEN);
     int client_port = ntohs(client_address.sin_port);
