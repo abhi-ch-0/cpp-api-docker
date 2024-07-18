@@ -7,14 +7,20 @@
 #include <arpa/inet.h>
 
 int tcp_socket_fd = -1;
+int client_socket_fd = -1;
 
 void signalHandler(int signum)
 {
     std::cout << "Interrupt signal (" << signum << ") received." << std::endl;
     if (tcp_socket_fd != -1)
     {
-        std::cout << "Closing the socket." << std::endl;
+        std::cout << "Closing the listening socket." << std::endl;
         close(tcp_socket_fd);
+    }
+    if (client_socket_fd != -1)
+    {
+        std::cout << "Closing the client socket." << std::endl;
+        close(client_socket_fd);
     }
     exit(signum);
 }
@@ -59,13 +65,15 @@ int main()
     struct sockaddr_in client_address;
     socklen_t client_addrlen = sizeof(client_address);
 
-    int client_socket_fd = accept(tcp_socket_fd, (struct sockaddr *)&client_address, &client_addrlen);
+    client_socket_fd = accept(tcp_socket_fd, (struct sockaddr *)&client_address, &client_addrlen);
 
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &client_address.sin_addr, client_ip, INET_ADDRSTRLEN);
     int client_port = ntohs(client_address.sin_port);
 
     std::cout << "Accepted connection from " << client_ip << ":" << client_port << std::endl;
+
+    close(client_socket_fd);
 
     close(tcp_socket_fd);
     return 0;
