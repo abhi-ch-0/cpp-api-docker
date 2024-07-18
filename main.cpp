@@ -28,6 +28,20 @@ int main()
         exit(EXIT_FAILURE);
     }
     std::cout << "Socket created successfully." << std::endl;
+
+    struct sockaddr_in address;
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(8080);
+
+    int bind_result = bind(tcp_socket_fd, (const struct sockaddr *)&address, sizeof(address));
+    if (bind_result == -1)
+    {
+        perror("Socket bind failed.");
+        close(tcp_socket_fd);
+        exit(EXIT_FAILURE);
+    }
+
     close(tcp_socket_fd);
     return 0;
 }
