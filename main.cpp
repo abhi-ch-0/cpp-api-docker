@@ -82,10 +82,23 @@ int main()
 
     char recv_buffer[1024] = {0};
     ssize_t bytes_read = read(client_socket_fd, recv_buffer, 1024);
+    std::string request_msg(recv_buffer, bytes_read);
     if (bytes_read > 0)
     {
-        std::cout << "Received message: " << std::string(recv_buffer, bytes_read) << std::endl;
+        std::cout << "Request message: " << request_msg << std::endl;
     }
+
+    std::string response = "bye";
+    ssize_t bytes_sent = send(client_socket_fd, response.c_str(), response.length(), 0);
+    if (bytes_sent == -1)
+    {
+        perror("Send failed.");
+        close(tcp_socket_fd);
+        close(client_socket_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    std::cout << "Message sent: " << response << std::endl;
 
     close(client_socket_fd);
 
