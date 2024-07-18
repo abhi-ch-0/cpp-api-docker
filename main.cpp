@@ -73,6 +73,13 @@ int main()
 
     std::cout << "Accepted connection from " << client_ip << ":" << client_port << std::endl;
 
+    char recv_buffer[1024] = {0};
+    ssize_t bytes_read = read(client_socket_fd, recv_buffer, 1024);
+    if (bytes_read > 0)
+    {
+        std::cout << "Received message: " << std::string(recv_buffer, bytes_read) << std::endl;
+    }
+
     close(client_socket_fd);
 
     close(tcp_socket_fd);
