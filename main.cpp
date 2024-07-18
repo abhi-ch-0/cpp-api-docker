@@ -42,6 +42,18 @@ int main()
         exit(EXIT_FAILURE);
     }
 
+    std::cout << "Socket bounded successfully." << std::endl;
+
+    int listen_status = listen(tcp_socket_fd, 3);
+    if (listen_status == -1)
+    {
+        perror("Listen failed on socket.");
+        close(tcp_socket_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    std::cout << "Socket created and listening on port 8080." << std::endl;
+
     close(tcp_socket_fd);
     return 0;
 }
