@@ -65,42 +65,45 @@ int main()
     struct sockaddr_in client_address;
     socklen_t client_addrlen = sizeof(client_address);
 
-    client_socket_fd = accept(tcp_socket_fd, (struct sockaddr *)&client_address, &client_addrlen);
-
-    if (client_socket_fd == -1)
+    while (true)
     {
-        perror("Accept failed on socket.");
-        close(tcp_socket_fd);
-        exit(EXIT_FAILURE);
-    }
+        client_socket_fd = accept(tcp_socket_fd, (struct sockaddr *)&client_address, &client_addrlen);
 
-    char client_ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &client_address.sin_addr, client_ip, INET_ADDRSTRLEN);
-    int client_port = ntohs(client_address.sin_port);
+        if (client_socket_fd == -1)
+        {
+            perror("Accept failed on socket.");
+            close(tcp_socket_fd);
+            exit(EXIT_FAILURE);
+        }
 
-    std::cout << "Accepted connection from " << client_ip << ":" << client_port << std::endl;
+        char client_ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &client_address.sin_addr, client_ip, INET_ADDRSTRLEN);
+        int client_port = ntohs(client_address.sin_port);
 
-    char recv_buffer[1024] = {0};
-    ssize_t bytes_read = read(client_socket_fd, recv_buffer, 1024);
-    std::string request_msg(recv_buffer, bytes_read);
-    if (bytes_read > 0)
-    {
-        std::cout << "Request message: " << request_msg << std::endl;
-    }
+        std::cout << "Accepted connection from " << client_ip << ":" << client_port << std::endl;
 
-    std::string response = "bye";
-    ssize_t bytes_sent = send(client_socket_fd, response.c_str(), response.length(), 0);
-    if (bytes_sent == -1)
-    {
-        perror("Send failed.");
-        close(tcp_socket_fd);
+        char recv_buffer[1024] = {0};
+        ssize_t bytes_read = read(client_socket_fd, recv_buffer, 1024);
+        std::string request_msg(recv_buffer, bytes_read);
+        if (bytes_read > 0)
+        {
+            std::cout << "Request message: " << request_msg << std::endl;
+        }
+
+        std::string response = "bye";
+        ssize_t bytes_sent = send(client_socket_fd, response.c_str(), response.length(), 0);
+        if (bytes_sent == -1)
+        {
+            perror("Send failed.");
+            close(tcp_socket_fd);
+            close(client_socket_fd);
+            exit(EXIT_FAILURE);
+        }
+
+        std::cout << "Message sent: " << response << std::endl;
+
         close(client_socket_fd);
-        exit(EXIT_FAILURE);
     }
-
-    std::cout << "Message sent: " << response << std::endl;
-
-    close(client_socket_fd);
 
     close(tcp_socket_fd);
     return 0;
