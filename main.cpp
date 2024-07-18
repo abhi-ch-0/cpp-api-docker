@@ -21,7 +21,7 @@ int main()
 {
     signal(SIGINT, signalHandler);
 
-    int tcp_socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    tcp_socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (tcp_socket_fd == -1)
     {
         perror("Socket creation failed.");
