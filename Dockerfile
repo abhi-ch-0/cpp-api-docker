@@ -10,5 +10,8 @@ COPY . /app
 # Compile the C++ program
 RUN g++ -o myapp main.cpp
 
+# Expose port 8080
+EXPOSE 8080
+
 # Command to run the executable
 CMD ["./myapp"]
